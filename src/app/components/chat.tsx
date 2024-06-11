@@ -8,6 +8,7 @@ const ChatComponent: React.FC = () => {
     const [messages, setMessages] = useState<string[]>([]);
     const [input, setInput] = useState<string>('');
     const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
+    const sessionId = 'unique-session-id'; // Generate a unique session ID for each user/session
 
     const sendMessage = async () => {
         if (input.trim() === '') return;
@@ -17,7 +18,7 @@ const ChatComponent: React.FC = () => {
         setIsBotTyping(true);
 
         try {
-            await llamaService.generateResponse(input, (data: string) => {
+            await llamaService.generateResponse(sessionId, input, (data: string) => {
                 setMessages((prevMessages) => {
                     const lastMessage = prevMessages[prevMessages.length - 1];
                     if (lastMessage && lastMessage.startsWith('Bot:')) {
