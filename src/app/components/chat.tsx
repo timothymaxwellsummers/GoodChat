@@ -54,8 +54,8 @@ const ChatComponent: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-6 max-w-lg flex flex-col h-screen">
-            <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md bg-white space-y-3 overflow-y-auto mb-4">
+        <div className="container mx-auto p-6 w-[90%] max-w-full flex flex-col h-screen">
+            <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md bg-white space-y-4 overflow-y-auto mb-4">
             {messages.map((message, index) => (
                     <div key={index} className={`p-2 rounded-lg ${
                         message.startsWith('You:') ? 'bg-blue-100 text-blue-800 self-end' : 'bg-gray-100 text-gray-800 self-start'}`}>
@@ -79,7 +79,7 @@ const ChatComponent: React.FC = () => {
                 />
                 <button onClick={sendMessage} 
                 disabled={isBotTyping}
-                className={`ml-2 bg-blue-500 text-white rounded-lg p-3 shadow-lg transition-colors duration-200 ${
+                className={`ml-2 bg-blue-900 text-white rounded-lg p-3 shadow-lg transition-colors duration-200 ${
                     isBotTyping ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}>
                     Send
                 </button>
