@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import LlamaService from '../services/llamaService';
 
 const llamaService = new LlamaService('https://ollama.medien.ifi.lmu.de');
@@ -9,6 +9,22 @@ const ChatComponent: React.FC = () => {
     const [input, setInput] = useState<string>('');
     const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
     const sessionId = 'unique-session-id'; // Generate a unique session ID for each user/session
+
+    const chatBoxRef = useRef<HTMLDivElement>(null);
+    
+    useEffect(() => {
+        const savedMessages = localStorage.getItem('chatMessages');
+        if (savedMessages) {
+            setMessages(JSON.parse(savedMessages));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('chatMessages', JSON.stringify(messages));
+        if (chatBoxRef.current) {
+            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+        }
+    }, [messages]);
 
     const sendMessage = async () => {
         if (input.trim() === '') return;
@@ -38,23 +54,33 @@ const ChatComponent: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <div className="chat-box border p-4 rounded">
-                {messages.map((message, index) => (
-                    <div key={index} className="mb-2">
+        <div className="container mx-auto p-6 max-w-lg flex flex-col h-screen">
+            <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md bg-white space-y-3 overflow-y-auto mb-4">
+            {messages.map((message, index) => (
+                    <div key={index} className={`p-2 rounded-lg ${
+                        message.startsWith('You:') ? 'bg-blue-100 text-blue-800 self-end' : 'bg-gray-100 text-gray-800 self-start'}`}>
                         {message}
                     </div>
                 ))}
                 {isBotTyping && <div>Bot is typing...</div>}
             </div>
-            <div className="input-box mt-4 flex">
+            <div className="input-box sticky bottom-0 left-0 w-full bg-white p-4 border-t border-gray-300 flex">
                 <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className="flex-grow border rounded p-2"
+                    className="flex-grow border border-gray-300 rounded-lg p-3 shadow-inner"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') sendMessage();
+                    }}
+                    placeholder="Type your message..."
+                    aria-label="Chat input"
+                    role="textbox"
                 />
-                <button onClick={sendMessage} className="ml-2 bg-blue-500 text-white rounded p-2">
+                <button onClick={sendMessage} 
+                disabled={isBotTyping}
+                className={`ml-2 bg-blue-500 text-white rounded-lg p-3 shadow-lg transition-colors duration-200 ${
+                    isBotTyping ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}>
                     Send
                 </button>
             </div>
