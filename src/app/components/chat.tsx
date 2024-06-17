@@ -76,7 +76,7 @@ useEffect(() => {
       <Grid container justifyContent={"center"} alignItems={"center"}>
         <BasicModal onSubmit={handleFormSubmit} score={handleTotalScore} />
       </Grid>
-      <div className="container mx-auto p-6 w-[90%] max-w-full flex flex-col h-screen">
+      <div className="container mx-auto p-6 w-[80%] max-w-full flex flex-col h-screen">
         <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md space-y-4 overflow-y-auto mb-4"
                   style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
           {messages.map((message, index) => (
