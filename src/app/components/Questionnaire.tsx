@@ -17,12 +17,11 @@ export interface QAObject {
 }
 
 interface Props {
-  onSubmit: (responseObject: QAObject) => void;
-  onClose: () => void;
+  onSubmit: (responseObject: QAObject, score: number) => void;
   score: (score: number) => void;
 }
 
-const GAD7Form: React.FC<Props> = ({ onSubmit, onClose, score }) => {
+const GAD7Form: React.FC<Props> = ({ onSubmit, score }) => {
   const questions = [
     "Feeling nervous, anxious, or on edge",
     "Not being able to stop or control worrying",
@@ -54,9 +53,10 @@ const GAD7Form: React.FC<Props> = ({ onSubmit, onClose, score }) => {
     event.preventDefault();
     const responseObject = createResponseObject(questions, responses);
     const totalScore = responses.reduce((a, b) => a + b, 0);
+    console.log("Score", totalScore);
+    console.log("Response", responseObject);
     score(totalScore);
-    onSubmit(responseObject); // Pass responseObject to parent component
-    onClose();
+    onSubmit(responseObject, totalScore); // Pass responseObject and score to parent component
   };
 
   const createResponseObject = (

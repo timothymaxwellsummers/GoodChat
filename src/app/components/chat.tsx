@@ -1,17 +1,18 @@
 "use client";
-import React, { useState } from "react";
-import { Grid } from "@mui/material";
-import BasicModal from "./BasicModal";
-import { QAObject } from "./Questionnaire";
+import React, { useState, useEffect } from "react";
 import LlamaService from "../services/llamaService";
 
-const llamaService = new LlamaService("https://ollama.medien.ifi.lmu.de");
+interface Props {
+  llamaService: LlamaService;
+}
 
-const ChatComponent: React.FC = () => {
+
+const ChatComponent: React.FC<Props> = ({ llamaService }) => {
   const [messages, setMessages] = useState<string[]>([]);
   const [input, setInput] = useState<string>("");
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
   const sessionId = "unique-session-id"; // Generate a unique session ID for each user/session
+
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
@@ -43,20 +44,9 @@ const ChatComponent: React.FC = () => {
     }
   };
 
-  const handleFormSubmit = (responseObject: QAObject) => {
-    // Questionnaire response as question: String, answer: number response
-    console.log("Received responseObject:", responseObject);
-  };
-
-  const handleTotalScore = (score: number) => {
-    console.log("Overall score:", score);
-  };
-
   return (
-    <Grid container margin={"3vh"}>
-      <Grid container justifyContent={"center"} alignItems={"center"}>
-        <BasicModal onSubmit={handleFormSubmit} score={handleTotalScore} />
-      </Grid>
+    <>
+      <div className="my-6" />
       <div className="container mx-auto p-4">
         <div className="chat-box border p-4 rounded">
           {messages.map((message, index) => (
@@ -81,7 +71,7 @@ const ChatComponent: React.FC = () => {
           </button>
         </div>
       </div>
-    </Grid>
+    </>
   );
 };
 
