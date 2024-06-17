@@ -1,13 +1,13 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import { Grid } from "@mui/material";
-import BasicModal from "./BasicModal";
-import { QAObject } from "./Questionnaire";
+import React, { useState, useEffect, useRef} from "react";
 import LlamaService from "../services/llamaService";
 
-const llamaService = new LlamaService("https://ollama.medien.ifi.lmu.de");
+interface Props {
+  llamaService: LlamaService;
+}
 
-const ChatComponent: React.FC = () => {
+
+const ChatComponent: React.FC<Props> = ({ llamaService }) => {
   const [messages, setMessages] = useState<string[]>([]);
   const [input, setInput] = useState<string>("");
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
@@ -62,20 +62,9 @@ useEffect(() => {
     }
   };
 
-  const handleFormSubmit = (responseObject: QAObject) => {
-    // Questionnaire response as question: String, answer: number response
-    console.log("Received responseObject:", responseObject);
-  };
-
-  const handleTotalScore = (score: number) => {
-    console.log("Overall score:", score);
-  };
-
   return (
-    <Grid container margin={"3vh"}>
-      <Grid container justifyContent={"center"} alignItems={"center"}>
-        <BasicModal onSubmit={handleFormSubmit} score={handleTotalScore} />
-      </Grid>
+    <>
+      <div className="my-6" />
       <div className="container mx-auto p-6 w-[80%] max-w-full flex flex-col h-screen">
         <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md space-y-4 overflow-y-auto mb-4"
                   style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
@@ -108,7 +97,7 @@ useEffect(() => {
           </button>
         </div>
       </div>
-    </Grid>
+    </>
   );
 };
 
