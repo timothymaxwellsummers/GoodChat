@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import LlamaService from '../services/llamaService';
+import "../globals.css";
 
 const llamaService = new LlamaService('https://ollama.medien.ifi.lmu.de');
 
@@ -33,6 +34,8 @@ const ChatComponent: React.FC = () => {
         setInput('');
         setIsBotTyping(true);
 
+
+        
         try {
             await llamaService.generateResponse(sessionId, input, (data: string) => {
                 setMessages((prevMessages) => {
@@ -55,16 +58,17 @@ const ChatComponent: React.FC = () => {
 
     return (
         <div className="container mx-auto p-6 w-[90%] max-w-full flex flex-col h-screen">
-            <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md bg-white space-y-4 overflow-y-auto mb-4">
+            <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md space-y-4 overflow-y-auto mb-4"
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
             {messages.map((message, index) => (
                     <div key={index} className={`p-2 rounded-lg ${
-                        message.startsWith('You:') ? 'bg-blue-100 text-blue-800 self-end' : 'bg-gray-100 text-gray-800 self-start'}`}>
+                        message.startsWith('You:') ? 'bg-blue-300 text-gray-700 self-end' : 'bg-gray-100 text-gray-800 self-start'}`}>
                         {message}
                     </div>
                 ))}
                 {isBotTyping && <div>Bot is typing...</div>}
             </div>
-            <div className="input-box sticky bottom-0 left-0 w-full bg-white p-4 border-t border-gray-300 flex">
+            <div className="input-box sticky bottom-0 left-0 w-full p-2 flex">
                 <input
                     type="text"
                     value={input}
