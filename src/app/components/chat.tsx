@@ -1,9 +1,11 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
+import { Grid } from "@mui/material";
+import BasicModal from "./BasicModal";
+import { QAObject } from "./Questionnaire";
 import LlamaService from '../services/llamaService';
-import "../globals.css";
 
-const llamaService = new LlamaService('https://ollama.medien.ifi.lmu.de');
+const llamaService = new LlamaService("https://ollama.medien.ifi.lmu.de");
 
 const ChatComponent: React.FC = () => {
     const [messages, setMessages] = useState<string[]>([]);
@@ -27,15 +29,15 @@ const ChatComponent: React.FC = () => {
         }
     }, [messages]);
 
-    const sendMessage = async () => {
-        if (input.trim() === '') return;
+    
+
+  const sendMessage = async () => {
+    if (input.trim() === "") return;
 
         setMessages([...messages, `You: ${input}`]);
         setInput('');
         setIsBotTyping(true);
 
-
-        
         try {
             await llamaService.generateResponse(sessionId, input, (data: string) => {
                 setMessages((prevMessages) => {
@@ -56,6 +58,10 @@ const ChatComponent: React.FC = () => {
         }
     };
 
+    const handleFormSubmit = (responseObject: QAObject) => {
+        // Questionnaire response as question: String, answer: number response
+        console.log("Received responseObject:", responseObject);
+      };
     return (
         <div className="container mx-auto p-6 w-[90%] max-w-full flex flex-col h-screen">
             <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md space-y-4 overflow-y-auto mb-4"
