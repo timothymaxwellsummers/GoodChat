@@ -80,9 +80,10 @@ useEffect(() => {
         <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md space-y-4 overflow-y-auto mb-4"
                   style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
           {messages.map((message, index) => (
-            <div key={index} className="mb-2">
+             <div key={index} className={`p-2 rounded-lg ${
+              message.startsWith('You:') ? 'bg-blue-300 text-gray-700 self-end' : 'bg-gray-100 text-gray-800 self-start'}`}>
               {message}
-            </div>
+          </div>
           ))}
           {isBotTyping && <div>Bot is typing...</div>}
         </div>
