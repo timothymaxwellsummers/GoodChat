@@ -13,7 +13,6 @@ const ChatComponent: React.FC<Props> = ({ llamaService }) => {
   const [input, setInput] = useState<string>("");
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
   const sessionId = "unique-session-id"; // Generate a unique session ID for each user/session
-
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,20 +61,15 @@ const ChatComponent: React.FC<Props> = ({ llamaService }) => {
 
   return (
     <>
-      <div className="my-6" />
+      <div className="my-6"/>
       <div className="container mx-auto p-6 w-[80%] max-w-full flex flex-col h-screen">
-        <div
-          ref={chatBoxRef}
-          className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md space-y-4 overflow-y-auto mb-4"
+        <div ref={chatBoxRef} className="chat-box flex-grow border border-gray-300 p-4 rounded-lg shadow-md space-y-4 overflow-y-auto mb-4"
           style={{ backgroundColor: "rgba(255, 255, 255, 0.5)" }}
         >
           {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`p-2 rounded-lg flex ${
-                message.startsWith("You:") ? "bg-blue-300 text-gray-700 self-end" : "bg-gray-100 text-gray-800 self-start"
-              }`}
-              >
+            <div key={index} className={`p-2 rounded-lg flex ${
+                message.startsWith("You:") ? "bg-blue-300 text-gray-700 self-end" : "bg-gray-100 text-gray-800 self-start"}`}
+            >
               {!message.startsWith("You:") && (
                 <Image  src={avatar} alt="Bot Avatar" className="w-8 h-8 rounded-full mr-2" width={32} height={32}/>
               )}
@@ -97,10 +91,7 @@ const ChatComponent: React.FC<Props> = ({ llamaService }) => {
             aria-label="Chat input"
             role="textbox"
           />
-          <button
-            onClick={sendMessage}
-            className="ml-2 bg-blue-500 text-white rounded p-2"
-          >
+          <button onClick={sendMessage} className="ml-2 bg-blue-500 text-white rounded p-2">
             Send
           </button>
         </div>
