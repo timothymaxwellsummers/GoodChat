@@ -9,10 +9,10 @@ interface Props {
 }
 
 const ChatComponent: React.FC<Props> = ({ llamaService }) => {
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<string[]>(["Clara: Hello! Thanks for finishing the study...\nHow are you feeling today? Are you bothered by anything specifically?"]);
   const [input, setInput] = useState<string>("");
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
-  const sessionId = "unique-session-id"; // Generate a unique session ID for each user/session
+  const sessionId = "unique-session-id"; // ToDo Generate a unique session ID for each user/session
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
