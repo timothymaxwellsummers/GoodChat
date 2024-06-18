@@ -1,4 +1,3 @@
-// GAD7Form.tsx
 import React, { useState } from "react";
 import {
   Container,
@@ -40,7 +39,7 @@ const GAD7Form: React.FC<Props> = ({ onSubmit, score }) => {
   ];
 
   const [responses, setResponses] = useState<number[]>(
-    new Array(questions.length).fill(0)
+    new Array(questions.length)
   );
 
   const handleChange = (index: number, value: number) => {
