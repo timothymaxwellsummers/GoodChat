@@ -45,7 +45,7 @@ export class LlamaService {
             .map(([question, answer]) => `${question}: ${answer}`)
             .join("\n");
 
-        return `You are a helpful assistant who remembers all details the user shares with you. You are specialised on detecting and treating mental health issues.\n\n The user has performed the GAD-7 survey that measures general axiety disorders. Here are the results: ${responseEntries}\nAnd here is the evaluated score:${score}. Use this for more context on the user you are talking to.`;
+        return `You are a helpful assistant who remembers all details the user shares with you. You answer short in max 300 words. You are specialised on detecting and treating mental health issues.\n\n The user has performed the GAD-7 survey that measures general axiety disorders. Here are the results: ${responseEntries}\nAnd here is the evaluated score:${score}. Use this for more context on the user you are talking to.`;
     }
 
     async generateResponse(sessionId: string, prompt: string, onData: (data: string) => void): Promise<void> {
