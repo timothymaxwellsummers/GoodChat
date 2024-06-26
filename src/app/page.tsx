@@ -1,29 +1,35 @@
-'use client';
-import React, { useState } from "react";
-import ChatWrapper from "./components/ChatWrapper";
-import GAD7Form, { QAObject } from "./components/Questionnaire";
+"use client";
+import { useEffect } from 'react';
+import { redirect } from 'next/navigation'
 
-export default function Home() {
-  const [chatMode, setChatMode] = useState<boolean>(false);
-  const [formResponses, setFormResponses] = useState<QAObject | null>(null);
-  const [formScore, setFormScore] = useState<number | null>(null);
+const HomePage: React.FC = () => {
 
-  const handleFormSubmit = (responses: QAObject, score: number) => {
-    setFormResponses(responses);
-    setFormScore(score);
-    setChatMode(true);
-  };
+  useEffect(() => {
+    // Function to check if personalInformation.json exists in localStorage
+    const checkPersonalInformation = () => {
+      const personalInfo = localStorage.getItem('personalInformation.json');
+      if (personalInfo) {
+        redirect('/dashboard')
+      } else {
+        redirect('/setup')
+      }
+    };
+
+    checkPersonalInformation();
+
+    window.addEventListener('storage', checkPersonalInformation);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener('storage', checkPersonalInformation);
+    };
+  }, []);
 
   return (
-    <main className="min-h-screen bg-blue-200 flex items-center justify-center p-4">
-      {chatMode ? (
-        <ChatWrapper responses={formResponses} score={formScore} />
-      ) : (
-        <GAD7Form
-          onSubmit={handleFormSubmit}
-          score={(score: number) => setFormScore(score)}
-        />
-      )}
-    </main>
+    <div className="flex items-center justify-center h-screen">
+      <p className="text-lg text-gray-600">Loading...</p>
+    </div>
   );
-}
+};
+
+export default HomePage;
