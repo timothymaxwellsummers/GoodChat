@@ -5,6 +5,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { RunnableWithMessageHistory } from "@langchain/core/runnables";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { QAObject } from "../components/Questionnaire";
+import WeatherService from './weatherService'; // Adjust the import path as necessary
 
 export class LlamaService {
     private model: ChatOllama;
@@ -17,18 +18,19 @@ export class LlamaService {
             model: 'llama2',
         });
 
-        const systemPrompt = this.generateSystemPrompt(score, responses);
-        const prompt = ChatPromptTemplate.fromMessages([
-            ["system", systemPrompt],
-            ["placeholder", "{chat_history}"],
-            ["human", "{input}"],
-        ]);
-
-        const chain = prompt.pipe(this.model);
         const messageHistories: Record<string, InMemoryChatMessageHistory> = {};
 
+        const getChain = (systemPrompt: string) => {
+            const prompt = ChatPromptTemplate.fromMessages([
+                ["system", systemPrompt],
+                ["placeholder", "{chat_history}"],
+                ["human", "{input}"],
+            ]);
+            return prompt.pipe(this.model);
+        };
+
         this.withMessageHistory = new RunnableWithMessageHistory({
-            runnable: chain,
+            runnable: getChain(""), // Initial empty chain
             getMessageHistory: async (sessionId: string) => {
                 if (!messageHistories[sessionId]) {
                     messageHistories[sessionId] = new InMemoryChatMessageHistory();
@@ -40,15 +42,32 @@ export class LlamaService {
         });
     }
 
-    private generateSystemPrompt(score: number, responses: QAObject): string {
+    private generateSystemPrompt(score: number, responses: QAObject, weatherData: any): string {
         const responseEntries = Object.entries(responses)
             .map(([question, answer]) => `${question}: ${answer}`)
             .join("\n");
 
-        return `You are a helpful assistant who remembers all details the user shares with you. You answer short in max 300 words. You are specialised on detecting and treating mental health issues.\n\n The user has performed the GAD-7 survey that measures general axiety disorders. Here are the results: ${responseEntries}\nAnd here is the evaluated score:${score}. Use this for more context on the user you are talking to.`;
+        const weatherInfo = `Current Weather in Munich:
+Temperature: ${weatherData.current.temperature2m}°C
+Apparent Temperature: ${weatherData.current.apparentTemperature}°C
+Is Day: ${weatherData.current.isDay ? "Yes" : "No"}
+Rain: ${weatherData.current.rain}mm`;
+
+        return `You are a helpful assistant who remembers all details the user shares with you. You answer short in max 300 words. You are specialised on detecting and treating mental health issues.\n\n The user has performed the GAD-7 survey that measures general anxiety disorders. Here are the results: ${responseEntries}\nAnd here is the evaluated score:${score}. Use this for more context on the user you are talking to.\n\nAdditionally, here's the current weather information:\n${weatherInfo}`;
     }
 
     async generateResponse(sessionId: string, prompt: string, onData: (data: string) => void): Promise<void> {
+        const weatherData = await WeatherService.getWeather();
+
+        const systemPrompt = this.generateSystemPrompt(0, {}, weatherData); // Replace 0 and {} with actual score and responses if available
+        const chain = ChatPromptTemplate.fromMessages([
+            ["system", systemPrompt],
+            ["placeholder", "{chat_history}"],
+            ["human", "{input}"],
+        ]).pipe(this.model);
+
+        this.withMessageHistory.runnable = chain;
+
         const config = {
             configurable: {
                 sessionId,
