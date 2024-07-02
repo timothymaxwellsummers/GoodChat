@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import GeneralInfoQuestions from "./components/GeneralnfoQuestions";
 
 const SetupPage: React.FC = () => {
   const router = useRouter();
@@ -20,14 +21,8 @@ const SetupPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl mb-4">Setup</h1>
-      <button
-        onClick={savePersInfo}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-      >
-        Generate Personal Information
-      </button>
+    <div className="min-h-screen bg-blue-200 flex items-center justify-center p-4">
+      <GeneralInfoQuestions />
     </div>
   );
 };

@@ -7,7 +7,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     // Function to check if personalInformation.json exists in localStorage
     const checkPersonalInformation = () => {
-      const personalInfo = localStorage.getItem('personalInformation.json');
+      const personalInfo = localStorage.getItem('profile.json');
       if (personalInfo) {
         redirect('/dashboard')
       } else {
