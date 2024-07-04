@@ -3,7 +3,11 @@ import React, { useState, useEffect } from "react";
 import { chatService } from "../../services/llamaService";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 
-const ChatComponent: React.FC = () => {
+interface ChatComponentProps {
+  children: React.ReactNode;
+}
+
+const ChatComponent: React.FC<ChatComponentProps> = ({children}) => {
   const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([]);
   const [input, setInput] = useState("");
 
@@ -25,6 +29,7 @@ const ChatComponent: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-blue-50">
+      {children}
       <div className="flex-1 overflow-auto p-4">
         <div className="max-w-2xl mx-auto">
           {messages.map((msg, index) => (

@@ -28,6 +28,22 @@ class ChatService {
     }
   }
 
+  async addMessage(content: string): Promise<void> {
+    const newMessage = new HumanMessage(content);
+    await this.messageHistory.addMessage(newMessage);
+
+    const responseMessage = await this.chain.invoke({
+      messages: await this.messageHistory.getMessages(),
+    });
+
+    await this.messageHistory.addMessage(new AIMessage(responseMessage.content.toString()));
+    this.saveMessagesToLocalStorage();
+  }
+
+  async getMessages(): Promise<(HumanMessage | AIMessage)[]> {
+    return this.messageHistory.getMessages();
+  }
+
   private async saveMessagesToLocalStorage() {
     if (typeof window !== 'undefined') {
       const messages = await this.messageHistory.getMessages();
@@ -52,22 +68,6 @@ class ChatService {
         });
       }
     }
-  }
-
-  async addMessage(content: string): Promise<void> {
-    const newMessage = new HumanMessage(content);
-    await this.messageHistory.addMessage(newMessage);
-
-    const responseMessage = await this.chain.invoke({
-      messages: await this.messageHistory.getMessages(),
-    });
-
-    await this.messageHistory.addMessage(new AIMessage(responseMessage.content.toString()));
-    this.saveMessagesToLocalStorage();
-  }
-
-  async getMessages(): Promise<(HumanMessage | AIMessage)[]> {
-    return this.messageHistory.getMessages();
   }
 }
 
