@@ -3,6 +3,7 @@ import { ChatOllama } from "@langchain/community/chat_models/ollama";
 import { ChatMessageHistory } from "langchain/stores/message/in_memory";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
+import { saveMessagesToLocalStorage, loadMessagesFromLocalStorage } from './localStorageService';
 
 class ChatService {
   private chat;
@@ -24,7 +25,7 @@ class ChatService {
     this.messageHistory = new ChatMessageHistory();
 
     if (typeof window !== 'undefined') {
-      this.loadMessagesFromLocalStorage();
+      this.loadMessages();
     }
   }
 
@@ -37,37 +38,26 @@ class ChatService {
     });
 
     await this.messageHistory.addMessage(new AIMessage(responseMessage.content.toString()));
-    this.saveMessagesToLocalStorage();
+    this.saveMessages();
   }
 
   async getMessages(): Promise<(HumanMessage | AIMessage)[]> {
     return this.messageHistory.getMessages();
   }
 
-  private async saveMessagesToLocalStorage() {
-    if (typeof window !== 'undefined') {
-      const messages = await this.messageHistory.getMessages();
-      console.log(messages);
-      console.log(JSON.stringify(messages));
-
-      localStorage.setItem("chatMessages", JSON.stringify(messages));
-    }
+  private async saveMessages() {
+    const messages = await this.messageHistory.getMessages();
+    await saveMessagesToLocalStorage("chatMessages", messages);
   }
 
-  private loadMessagesFromLocalStorage() {
-    if (typeof window !== 'undefined') {
-      const storedMessages = localStorage.getItem("chatMessages");
-      if (storedMessages) {
-        const parsedMessages = JSON.parse(storedMessages);
-        console.log(parsedMessages);
-        parsedMessages.forEach((msg: any) => {
-          const messageInstance = msg.id[2] === "HumanMessage"
-            ? new HumanMessage(msg.kwargs.content)
-            : new AIMessage(msg.kwargs.content);
-          this.messageHistory.addMessage(messageInstance);
-        });
-      }
-    }
+  private loadMessages() {
+    const messages = loadMessagesFromLocalStorage("chatMessages");
+    messages.forEach((msg: any) => {
+      const messageInstance = msg.id[2] === "HumanMessage"
+        ? new HumanMessage(msg.kwargs.content)
+        : new AIMessage(msg.kwargs.content);
+      this.messageHistory.addMessage(messageInstance);
+    });
   }
 }
 

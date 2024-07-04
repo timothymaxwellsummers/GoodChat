@@ -17,6 +17,7 @@ import {
   FormLabel,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { saveProfileData } from "@/app/services/localStorageService";
 
 interface QuestionGroup {
   label: string;
@@ -98,7 +99,7 @@ const GeneralInfoQuestions: React.FC = () => {
       })),
     }));
 
-    localStorage.setItem("profile.json", JSON.stringify(profileData, null, 2));
+    saveProfileData(JSON.stringify(profileData, null, 2));
     console.log("Profile Data:", profileData);
     router.push("/");
   };
