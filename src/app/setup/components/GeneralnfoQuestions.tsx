@@ -159,15 +159,16 @@ const GeneralInfoQuestions: React.FC = () => {
 
   return (
     <Container maxWidth="md">
-      <Typography variant="h4" component="h1" gutterBottom>
-        General Questions
-      </Typography>
+      <div className="text-3xl font-medium">👋 Hi there!</div>
+      <div className="text-xl text-gray-500 pt-2 pb-2">
+        First we want to get to know more about you.
+      </div>
       <form onSubmit={handleSubmit}>
         {questions.map((section, index) => (
-          <Box key={index} mb={4}>
-            <Typography variant="h6" component="h2" gutterBottom>
-              {section.label}
-            </Typography>
+          <Box key={index} mb={2}>
+            <div className="text-xl font-medium pt-4 pb-2">
+              {index + 1} {section.label}
+            </div>
             <Grid container spacing={2}>
               {section.questions.map((question, idx) => (
                 <Grid item xs={12} key={idx}>
@@ -177,10 +178,14 @@ const GeneralInfoQuestions: React.FC = () => {
             </Grid>
           </Box>
         ))}
+
         <Box mt={4}>
-          <Button variant="contained" color="primary" type="submit">
+          <button
+            className="bg-sky-600 hover:bg-sky-800 text-white font-bold py-2 px-4 rounded"
+            type="submit"
+          >
             Submit
-          </Button>
+          </button>
         </Box>
       </form>
     </Container>
