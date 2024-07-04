@@ -15,6 +15,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     const personalInfo = getProfileData();
@@ -43,6 +44,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
     }
   }, [chatInitialized]);
 
+  //ToDo doesnt yet work the way it should -> should scroll to bottom whenever a new message is added
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -66,27 +68,39 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
 
   return (
     <div className="flex flex-col h-screen">
-      {children}
-      <div className="flex-1 overflow-auto p-4">
-        <div className="max-w-2xl mx-auto">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`my-2 p-3 rounded-lg ${
-                msg instanceof HumanMessage
-                  ? "bg-sky-50 text-right"
-                  : "bg-sky-100 text-left"
-              }`}
-            >
-              <p>{msg instanceof HumanMessage ? (<span className="font-semibold">You: </span>):(<span className="font-semibold">Clara: </span>)}{msg.content.toString()}</p>
-            </div>
-          ))}
-          {isBotTyping && <div>Clara is typing...</div>}
-          <div ref={messagesEndRef} />
+      {isTyping ? (
+        <div className="flex-1 overflow-auto p-4">
+          <div className="max-w-2xl mx-auto">
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`my-2 p-3 rounded-lg ${
+                  msg instanceof HumanMessage
+                    ? "bg-sky-50 text-right"
+                    : "bg-sky-100 text-left"
+                }`}
+              >
+                <p>
+                  {msg instanceof HumanMessage ? (
+                    <span className="font-semibold">You: </span>
+                  ) : (
+                    <span className="font-semibold">Clara: </span>
+                  )}
+                  {msg.content.toString()}
+                </p>
+              </div>
+            ))}
+            {isBotTyping && <div>Clara is typing...</div>}
+            <div ref={messagesEndRef} />
+          </div>
         </div>
-      </div>
+      ) : (
+        <>{children}</>
+      )}
       <div className="flex items-end p-4 bg-white border-t border-gray-200 fixed bottom-0 w-full">
         <textarea
+          onFocus={() => setIsTyping(true)}
+          onBlur={() => setIsTyping(false)}
           value={input}
           onChange={(e) => {
             setInput(e.target.value);
