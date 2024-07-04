@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use, useReducer } from "react";
 import { chatService } from "../../services/llamaService";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { getProfileData } from "../../services/localStorageService";
@@ -11,6 +11,9 @@ interface ChatComponentProps {
 const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
   const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([]);
   const [input, setInput] = useState("");
+  const [chatInitialized, setChatInitialized] = useState(false);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
 
   useEffect(() => {
     const personalInfo = getProfileData();
@@ -18,24 +21,35 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
 
     const fetchMessages = async () => {
       const historyMessages = await chatService.getMessages();
-      if (historyMessages.length === 0) {
-        await chatService.addInitialMessage();
-      }
-      setMessages(await chatService.getMessages());
+      setMessages(historyMessages);
     };
     fetchMessages();
+    setChatInitialized(true);
   }, []);
+
+  useEffect(() => {
+    console.log(messages);
+    if (chatInitialized && messages.length === 0) {
+      Promise.all([
+        chatService.addInitialMessage(),
+        chatService.getMessages(),
+      ]).then(([_, messages]) => {
+        setMessages(messages);
+        forceUpdate();
+      });
+    }
+  }, [chatInitialized]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
+    setInput("");
     await chatService.addMessage(input);
     setMessages(await chatService.getMessages());
-    setInput("");
   };
 
   return (
-    <div className="flex flex-col h-screen bg-blue-50">
+    <div className="flex flex-col h-screen">
       {children}
       <div className="flex-1 overflow-auto p-4">
         <div className="max-w-2xl mx-auto">
@@ -44,8 +58,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
               key={index}
               className={`my-2 p-3 rounded-lg ${
                 msg instanceof HumanMessage
-                  ? "bg-blue-100 text-right"
-                  : "bg-green-100 text-left"
+                  ? "bg-sky-50 text-right"
+                  : "bg-sky-100 text-left"
               }`}
             >
               <p>{msg.content.toString()}</p>
@@ -53,7 +67,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
           ))}
         </div>
       </div>
-      <div className="flex items-center p-4 bg-white border-t border-gray-200">
+      <div className="flex items-center p-4 bg-white border-t border-gray-200 fixed bottom-0 w-full">
         <input
           type="text"
           value={input}
@@ -63,7 +77,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
         />
         <button
           onClick={handleSend}
-          className="ml-4 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
+          className="ml-4 p-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 focus:outline-none"
         >
           Send
         </button>

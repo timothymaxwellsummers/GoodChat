@@ -5,7 +5,7 @@ import Header from '../components/Header';
 
 const DashboardPage: React.FC = () => {
     return (
-        <div>
+        <div className='pt-11 pb-16'>
             <Header/>
             <Chat>
                 <Options/>
