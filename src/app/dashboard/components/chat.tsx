@@ -8,18 +8,20 @@ interface ChatComponentProps {
   children: React.ReactNode;
 }
 
-const ChatComponent: React.FC<ChatComponentProps> = ({children}) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
   const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([]);
   const [input, setInput] = useState("");
 
   useEffect(() => {
     const personalInfo = getProfileData();
-
     chatService.setPersonalInfo(personalInfo);
 
     const fetchMessages = async () => {
       const historyMessages = await chatService.getMessages();
-      setMessages(historyMessages);
+      if (historyMessages.length === 0) {
+        await chatService.addInitialMessage();
+      }
+      setMessages(await chatService.getMessages());
     };
     fetchMessages();
   }, []);

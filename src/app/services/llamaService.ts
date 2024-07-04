@@ -30,7 +30,7 @@ class ChatService {
   }
 
   private updatePrompt() {
-    const systemPrompt = `You are a helpful assistant. Answer all questions to the best of your ability. Here is some information about the user: ${this.personalInfo}`;
+    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Keep your answers concise, ideally within 2-3 sentences. Be empathic. Don't reccomend drugs.`;
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
       new MessagesPlaceholder("messages"),
@@ -53,6 +53,14 @@ class ChatService {
 
   async getMessages(): Promise<(HumanMessage | AIMessage)[]> {
     return this.messageHistory.getMessages();
+  }
+
+  async addInitialMessage(): Promise<void> {
+    const initialMessage = await this.chain.invoke({
+      messages: [],
+    });
+    await this.messageHistory.addMessage(new AIMessage(initialMessage.content.toString()));
+    this.saveMessages();
   }
 
   private async saveMessages() {
