@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, use, useReducer } from "react";
+import React, { useState, useEffect, use, useReducer, useRef } from "react";
 import { chatService } from "../../services/llamaService";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { getProfileData } from "../../services/localStorageService";
@@ -14,6 +14,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
   const [chatInitialized, setChatInitialized] = useState(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const personalInfo = getProfileData();
@@ -42,8 +43,17 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
     }
   }, [chatInitialized]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
+    scrollToBottom();
 
     setInput("");
     setIsBotTyping(true);
@@ -51,6 +61,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
     setMessages(await chatService.getMessages());
     setIsBotTyping(false);
     forceUpdate();
+    scrollToBottom();
   };
 
   return (
@@ -67,10 +78,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
                   : "bg-sky-100 text-left"
               }`}
             >
-              <p>{msg.content.toString()}</p>
+              <p>{msg instanceof HumanMessage ? (<span className="font-semibold">You: </span>):(<span className="font-semibold">Clara: </span>)}{msg.content.toString()}</p>
             </div>
           ))}
           {isBotTyping && <div>Clara is typing...</div>}
+          <div ref={messagesEndRef} />
         </div>
       </div>
       <div className="flex items-end p-4 bg-white border-t border-gray-200 fixed bottom-0 w-full">
