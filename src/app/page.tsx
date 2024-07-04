@@ -1,9 +1,8 @@
 "use client";
-import { useEffect } from 'react';
-import { redirect } from 'next/navigation'
+import { useEffect } from "react";
+import { redirect } from "next/navigation";
 
 const HomePage: React.FC = () => {
-
   useEffect(() => {
     // Function to check if personalInformation.json exists in localStorage
     const checkPersonalInformation = () => {
@@ -27,7 +26,17 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <p className="text-lg text-gray-600">Loading...</p>
+      <div>
+        <p className="text-3xl font-medium relative inline-block">
+          GoodChat
+          <span
+            className="text-sky-600 text-7xl absolute top-0"
+            style={{ lineHeight: "0.1" }}
+          >
+            .
+          </span>
+        </p>
+      </div>
     </div>
   );
 };
