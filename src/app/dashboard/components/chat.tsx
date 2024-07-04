@@ -12,8 +12,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
   const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([]);
   const [input, setInput] = useState("");
   const [chatInitialized, setChatInitialized] = useState(false);
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
 
   useEffect(() => {
     const personalInfo = getProfileData();
@@ -30,11 +30,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
   useEffect(() => {
     console.log(messages);
     if (chatInitialized && messages.length === 0) {
+      setIsBotTyping(true);
       Promise.all([
         chatService.addInitialMessage(),
         chatService.getMessages(),
       ]).then(([_, messages]) => {
         setMessages(messages);
+        setIsBotTyping(false);
         forceUpdate();
       });
     }
@@ -44,8 +46,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
     if (!input.trim()) return;
 
     setInput("");
+    setIsBotTyping(true);
     await chatService.addMessage(input);
     setMessages(await chatService.getMessages());
+    setIsBotTyping(false);
     forceUpdate();
   };
 
@@ -66,19 +70,31 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
               <p>{msg.content.toString()}</p>
             </div>
           ))}
+          {isBotTyping && <div>Clara is typing...</div>}
         </div>
       </div>
-      <div className="flex items-center p-4 bg-white border-t border-gray-200 fixed bottom-0 w-full">
-        <input
-          type="text"
+      <div className="flex items-end p-4 bg-white border-t border-gray-200 fixed bottom-0 w-full">
+        <textarea
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          onChange={(e) => {
+            setInput(e.target.value);
+            const textarea = e.target;
+            textarea.style.height = "auto"; // Reset the height
+            textarea.style.height = Math.min(textarea.scrollHeight, 96) + "px"; // Set the height based on scrollHeight, max 96px (3 lines)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+          placeholder="Type here to chat..."
+          rows={1}
+          className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 resize-none overflow-auto max-h-24 scrollbar-hide"
         />
         <button
           onClick={handleSend}
-          className="ml-4 p-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 focus:outline-none"
+          className="ml-4 p-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 focus:outline-none h-10"
         >
           Send
         </button>
