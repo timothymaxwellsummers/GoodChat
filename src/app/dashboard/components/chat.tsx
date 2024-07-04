@@ -46,6 +46,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
     setInput("");
     await chatService.addMessage(input);
     setMessages(await chatService.getMessages());
+    forceUpdate();
   };
 
   return (
