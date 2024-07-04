@@ -24,5 +24,5 @@ export const saveProfileData = (data: string): void => {
 };
 
 export const getProfileData = (): string => {
-  return typeof window !== "undefined" ? JSON.stringify(localStorage.getItem("profile.json")) : "";
+  return typeof window !== "undefined" ? JSON.stringify(localStorage.getItem("profile.json")).replace(/[{}]/g, '') : "";
 };

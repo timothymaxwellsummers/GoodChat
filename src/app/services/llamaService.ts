@@ -7,8 +7,9 @@ import { saveMessagesToLocalStorage, loadMessagesFromLocalStorage } from './loca
 
 class ChatService {
   private chat;
-  private chain;
+  private chain: any;
   private messageHistory;
+  private personalInfo: any;
 
   constructor() {
     this.chat = new ChatOllama({
@@ -16,17 +17,26 @@ class ChatService {
       model: "llama2",
     });
 
-    const prompt = ChatPromptTemplate.fromMessages([
-      ["system", "You are a helpful assistant. Answer all questions to the best of your ability."],
-      new MessagesPlaceholder("messages"),
-    ]);
-
-    this.chain = prompt.pipe(this.chat);
     this.messageHistory = new ChatMessageHistory();
 
     if (typeof window !== 'undefined') {
       this.loadMessages();
     }
+  }
+
+  setPersonalInfo(personalInfo: any) {
+    this.personalInfo = personalInfo;
+    this.updatePrompt();
+  }
+
+  private updatePrompt() {
+    const systemPrompt = `You are a helpful assistant. Answer all questions to the best of your ability. Here is some information about the user: ${this.personalInfo}`;
+    const prompt = ChatPromptTemplate.fromMessages([
+      ["system", systemPrompt],
+      new MessagesPlaceholder("messages"),
+    ]);
+
+    this.chain = prompt.pipe(this.chat);
   }
 
   async addMessage(content: string): Promise<void> {

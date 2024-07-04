@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { chatService } from "../../services/llamaService";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
+import { getProfileData } from "../../services/localStorageService";
 
 interface ChatComponentProps {
   children: React.ReactNode;
@@ -12,6 +13,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({children}) => {
   const [input, setInput] = useState("");
 
   useEffect(() => {
+    const personalInfo = getProfileData();
+
+    chatService.setPersonalInfo(personalInfo);
+
     const fetchMessages = async () => {
       const historyMessages = await chatService.getMessages();
       setMessages(historyMessages);
