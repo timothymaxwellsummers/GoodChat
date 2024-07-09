@@ -46,9 +46,9 @@ class ChatService {
     this.updatePrompt();
   }
 
-  setmoodInfo(moodInfo: any){
+  setMoodInfo(moodInfo: any){
     this.moodInfo = moodInfo;
-    this.updatePrompt;
+    this.updatePrompt();
   }
 
   private updatePrompt() {
@@ -106,7 +106,7 @@ class ChatService {
       throw new Error("Location or weather information is missing");
     }
   
-    const systemPrompt = `Use one sentence only. Answer short. Consider the opportunities in the area ${this.locationInfo}. Consider the temperature and condition ${this.weatherInfo} but dont mention it. Suggest a fun activity.`;
+    const systemPrompt = `Use one sentence only. Answer short. Consider the opportunities in the area ${this.locationInfo}. Consider the temperature and condition ${this.weatherInfo} but don't mention it. Suggest a fun activity.`;
   
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
@@ -121,7 +121,6 @@ class ChatService {
   
     return responseMessage.content.toString();
   }
-    
 }
 
 export const chatService = new ChatService();
