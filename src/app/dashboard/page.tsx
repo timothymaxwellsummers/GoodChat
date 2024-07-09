@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import MoodRequest from './components/moodRequest';
 import Options from './components/options';
-import Chat from './components/chat'; // assuming 'Chat' component is imported correctly
+import Chat from './components/chat'; 
 
 const DashboardPage: React.FC = () => {
     const [showDashboard, setShowDashboard] = useState(false);
