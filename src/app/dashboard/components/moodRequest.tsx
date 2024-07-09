@@ -23,12 +23,12 @@ const MoodRequest: React.FC<MoodRequestProps> = ({ onMoodSelect }) => {
   };
 
   if (selectedMood !== null) {
-    return null; // Return null to render nothing if mood is selected
+    return null;
   }
 
   return (
     <div className="bg-gray-100 p-4 rounded-lg mt-4">
-      <div className="text-sm text-gray-500 mb-2">😊 Choose Your Mood</div>
+      <div className="text-3xl font-medium">😊 Choose Your Mood</div>
       <div className="flex justify-around">
         {moods.map((moodItem, index) => (
           <div key={index} className="text-center">
