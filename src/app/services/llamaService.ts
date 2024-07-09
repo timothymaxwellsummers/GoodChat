@@ -33,8 +33,8 @@ class ChatService {
     this.updatePrompt();
   }
 
-  async setLocationInfo(){
-      this.locationInfo = await geolocationService.getCurrentPosition();
+  async setLocationInfo() {
+    this.locationInfo = await geolocationService.getCurrentPosition();
     this.updatePrompt();
   }
 
@@ -46,8 +46,8 @@ class ChatService {
   }
 
   private updatePrompt() {
-    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo}. The current weather at his area is ${this.weatherInfo}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Keep your answers concise, ideally within 2-3 sentences. Do not genrate longer answers than 2-3 sentences. This is very important. Try to stay on topic. Be empathic. Don't reccomend drugs.`;
-   
+    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo}. The current weather at his area is ${this.weatherInfo?.current?.temp_c}°C with ${this.weatherInfo?.current?.condition?.text}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Keep your answers concise, ideally within 2-3 sentences. Do not generate longer answers than 2-3 sentences. This is very important. Try to stay on topic. Be empathetic. Don't recommend drugs.`;
+
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
       new MessagesPlaceholder("messages"),
@@ -94,6 +94,28 @@ class ChatService {
       this.messageHistory.addMessage(messageInstance);
     });
   }
+
+  async getActivityRecommendation() {
+    if (!this.locationInfo || !this.weatherInfo) {
+      throw new Error("Location or weather information is missing");
+    }
+  
+    const systemPrompt = `Use one sentence. Consider the opportunities in the are ${this.locationInfo}. Consider the temperature and condition ${this.weatherInfo}. Suggest a fun activity.`;
+  
+    const prompt = ChatPromptTemplate.fromMessages([
+      ["system", systemPrompt],
+      new MessagesPlaceholder("messages"),
+    ]);
+  
+    const chain = prompt.pipe(this.chat);
+  
+    const responseMessage = await chain.invoke({
+      messages: [],
+    });
+  
+    return responseMessage.content.toString();
+  }
+    
 }
 
 export const chatService = new ChatService();

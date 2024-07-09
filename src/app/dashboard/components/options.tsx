@@ -3,9 +3,12 @@ import React, { useState, useEffect } from "react";
 import RandomQuote from "./RandomQuote";
 import { getWeather } from "../../services/weatherAPI";
 import { geolocationService } from "../../services/locationAPI";
+import { chatService } from "../../services/llamaService"; 
+
 
 const Options: React.FC = () => {
   const [weatherInfo, setWeatherInfo] = useState<any>(null);
+  const [activityRecommendation, setActivityRecommendation] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -15,9 +18,15 @@ const Options: React.FC = () => {
         const { latitude, longitude } = position.coords;
         const weatherData = await getWeather(latitude, longitude);
         setWeatherInfo(weatherData);
+
+        await chatService.setLocationInfo(); // Set location in chatService
+        await chatService.setWeatherInfo(); // Set weather in chatService
+
+        const recommendation = await chatService.getActivityRecommendation();
+        setActivityRecommendation(recommendation);
       } catch (err) {
-        setError("Failed to fetch weather data");
-        console.error("Error fetching weather:", err);
+        setError("Failed to fetch weather data or activity recommendation");
+        console.error("Error fetching weather or recommendation:", err);
       }
     };
 
@@ -42,6 +51,18 @@ const Options: React.FC = () => {
         <div className="pt-4 pb-4 text-red-500">{error}</div>
       ) : (
         <div className="pt-4 pb-4 text-gray-500">Loading weather data...</div>
+      )}
+      {activityRecommendation ? (
+        <div className="bg-gray-100 p-4 rounded-lg mt-4">
+          <div className="text-sm text-gray-500 mb-2">🎉 Activity Recommendation</div>
+          <div className="text-sm text-black-500 mb-2">
+            {activityRecommendation}
+          </div>
+        </div>
+      ) : error ? (
+        <div className="pt-4 pb-4 text-red-500">{error}</div>
+      ) : (
+        <div className="pt-4 pb-4 text-gray-500">Loading activity recommendation...</div>
       )}
       <RandomQuote />
     </div>
