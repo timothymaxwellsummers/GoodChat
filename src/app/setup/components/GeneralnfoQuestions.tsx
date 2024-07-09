@@ -27,7 +27,7 @@ interface QuestionGroup {
 const questions: QuestionGroup[] = [
   {
     label: "General information:",
-    questions: ["Name, Surname", "Current profession", "Learned profession"],
+    questions: ["Name, Surname", "Age", "Current profession", "Learned profession"],
   },
   {
     label: "Current situation:",
@@ -123,6 +123,7 @@ const GeneralInfoQuestions: React.FC = () => {
         );
       case "How much alcohol do you consume a day? (in liters)":
       case "How many cigarettes do you smoke a day?":
+      case "Age":
         return (
           <TextField
             fullWidth
