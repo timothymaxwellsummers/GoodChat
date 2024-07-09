@@ -4,12 +4,16 @@ import { ChatMessageHistory } from "langchain/stores/message/in_memory";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { saveMessagesToLocalStorage, loadMessagesFromLocalStorage } from './localStorageService';
+import { getWeather } from "./weatherAPI";
+import { geolocationService } from "./locationAPI";
 
 class ChatService {
   private chat;
   private chain: any;
   private messageHistory;
   private personalInfo: any;
+  private locationInfo: any;
+  private weatherInfo: any;
 
   constructor() {
     this.chat = new ChatOllama({
@@ -29,8 +33,21 @@ class ChatService {
     this.updatePrompt();
   }
 
+  async setLocationInfo(){
+      this.locationInfo = await geolocationService.getCurrentPosition();
+    this.updatePrompt();
+  }
+
+  async setWeatherInfo() {
+    const position = await geolocationService.getCurrentPosition();
+    const { latitude, longitude } = position.coords;
+    this.weatherInfo = await getWeather(latitude, longitude);
+    this.updatePrompt();
+  }
+
   private updatePrompt() {
-    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Keep your answers concise, ideally within 2-3 sentences. Do not genrate longer answers than 2-3 sentences. This is very important. Try to stay on topic. Be empathic. Don't reccomend drugs.`;
+    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo}. The current weather at his area is ${this.weatherInfo}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Keep your answers concise, ideally within 2-3 sentences. Do not genrate longer answers than 2-3 sentences. This is very important. Try to stay on topic. Be empathic. Don't reccomend drugs.`;
+   
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
       new MessagesPlaceholder("messages"),
