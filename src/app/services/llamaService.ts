@@ -14,6 +14,7 @@ class ChatService {
   private personalInfo: any;
   private locationInfo: any;
   private weatherInfo: any;
+  private moodInfo: any;
 
   constructor() {
     this.chat = new ChatOllama({
@@ -45,8 +46,13 @@ class ChatService {
     this.updatePrompt();
   }
 
+  setmoodInfo(moodInfo: any){
+    this.moodInfo = moodInfo;
+    this.updatePrompt;
+  }
+
   private updatePrompt() {
-    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo}. The current weather at his area is ${this.weatherInfo?.current?.temp_c}°C with ${this.weatherInfo?.current?.condition?.text}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Keep your answers concise, ideally within 2-3 sentences. Do not generate longer answers than 2-3 sentences. This is very important. Try to stay on topic. Be empathetic. Don't recommend drugs.`;
+    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo}. The current weather at his area is ${this.weatherInfo?.current?.temp_c}°C with ${this.weatherInfo?.current?.condition?.text}. Their current mood is ${this.moodInfo}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Keep your answers concise, ideally within 2-3 sentences. Do not generate longer answers than 2-3 sentences. This is very important. Try to stay on topic. Be empathetic. Don't recommend drugs.`;
 
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],

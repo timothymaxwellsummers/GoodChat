@@ -10,6 +10,8 @@ const Options: React.FC = () => {
   const [weatherInfo, setWeatherInfo] = useState<any>(null);
   const [activityRecommendation, setActivityRecommendation] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [mood, setMood] = useState<number | null>(null); 
+
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -19,9 +21,8 @@ const Options: React.FC = () => {
         const weatherData = await getWeather(latitude, longitude);
         setWeatherInfo(weatherData);
 
-        await chatService.setLocationInfo(); // Set location in chatService
-        await chatService.setWeatherInfo(); // Set weather in chatService
-
+        await chatService.setLocationInfo(); 
+        await chatService.setWeatherInfo(); 
         const recommendation = await chatService.getActivityRecommendation();
         setActivityRecommendation(recommendation);
       } catch (err) {
@@ -32,6 +33,7 @@ const Options: React.FC = () => {
 
     fetchWeather();
   }, []);
+
 
   return (
     <div className="px-4 pt-14">
