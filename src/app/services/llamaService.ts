@@ -106,7 +106,7 @@ class ChatService {
       throw new Error("Location or weather information is missing");
     }
   
-    const systemPrompt = `Use one sentence. Consider the opportunities in the are ${this.locationInfo}. Consider the temperature and condition ${this.weatherInfo}. Suggest a fun activity.`;
+    const systemPrompt = `Use one sentence only. Consider the opportunities in the area ${this.locationInfo}. Consider the temperature and condition ${this.weatherInfo} but dont mention it. Suggest a fun activity.`;
   
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
