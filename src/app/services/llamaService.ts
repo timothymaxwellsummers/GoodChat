@@ -29,8 +29,9 @@ class ChatService {
     this.updatePrompt();
   }
 
+
   private updatePrompt() {
-    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Keep your answers concise, ideally within 2-3 sentences. Do not genrate longer answers than 2-3 sentences. This is very important. Try to stay on topic. Be empathic. Don't reccomend drugs.`;
+    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Try to stay on topic. Be empathic. Don't reccomend drugs. Be concise. Don't use more that two to three sentences per message this is important.`;
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
       new MessagesPlaceholder("messages"),
