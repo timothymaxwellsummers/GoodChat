@@ -31,9 +31,9 @@ const Options: React.FC = () => {
         Here you can start chatting or explore more options.
       </div>
       {weatherInfo ? (
-        <div className="pt-4 pb-4">
-          <div className="text-2xl font-medium">🌤️ Current Weather</div>
-          <div className="text-lg text-gray-600">
+        <div className="bg-gray-100 p-4 rounded-lg mt-4">
+          <div className="text-sm text-gray-500 mb-2">🌤️ Current Weather</div>
+          <div className="text-xl text-black-500 pt-2 pb-2">
             {weatherInfo.location.name}, {weatherInfo.location.country}:{" "}
             {weatherInfo.current.temp_c}°C, {weatherInfo.current.condition.text}
           </div>
