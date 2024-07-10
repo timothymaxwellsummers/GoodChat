@@ -4,8 +4,8 @@ import { ChatMessageHistory } from "langchain/stores/message/in_memory";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { saveMessagesToLocalStorage, loadMessagesFromLocalStorage } from './localStorageService';
-import { getWeather } from "./weatherAPI";
-import { geolocationService } from "./locationAPI";
+import { getWeather } from "../dashboard/components/Weather";
+import { geolocationService } from "../api/location/locationAPI";
 
 class ChatService {
   private chat;

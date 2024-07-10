@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RandomQuote from "./RandomQuote";
-import { getWeather } from "../../services/weatherAPI";
-import { geolocationService } from "../../services/locationAPI";
+import { getWeather } from "../../dashboard/components/Weather";
+import { geolocationService } from "../../api/location/locationAPI";
 import { chatService } from "../../services/llamaService";
 
 const Options: React.FC = () => {

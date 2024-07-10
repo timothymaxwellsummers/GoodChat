@@ -16,8 +16,8 @@ const DashboardPage: React.FC = () => {
         <div className='pt-11 pb-16'>
             <Header />
             <div className="px-4">
-                {!showDashboard && <MoodRequest onMoodSelect={handleMoodSelected} />}
-                {showDashboard && <Chat><Options /></Chat>}
+                
+               <Chat><Options /></Chat>
             </div>
         </div>
     );
