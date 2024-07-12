@@ -5,7 +5,7 @@ import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { saveMessagesToLocalStorage, loadMessagesFromLocalStorage } from './localStorageService';
 import { getWeather } from "../dashboard/components/Weather";
-import { geolocationService } from "../api/location/geoLocationService";
+import { geolocationService } from "../dashboard/components/Location";
 
 class ChatService {
   private chat;
