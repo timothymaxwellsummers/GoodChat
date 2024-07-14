@@ -1,4 +1,4 @@
-"use client"
+"use"
 import React, { useState, useEffect, useReducer, useRef } from "react";
 import { chatService } from "../../services/llamaService";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
