@@ -1,8 +1,10 @@
-"use client";
-import React, { useState, useEffect, use, useReducer, useRef } from "react";
+import React, { useState, useEffect, useReducer, useRef } from "react";
 import { chatService } from "../../services/llamaService";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { getProfileData } from "../../services/localStorageService";
+import { getWeather } from "../../dashboard/components/Weather";
+import { geolocationService } from "../../dashboard/components/Location";
+import Options from "./options";
 
 interface ChatComponentProps {
   children: React.ReactNode;
@@ -16,35 +18,46 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [weatherInfo, setWeatherInfo] = useState<any>(null);
+  const [activityRecommendation, setActivityRecommendation] = useState<string | null>(null);
 
   useEffect(() => {
     const personalInfo = getProfileData();
     chatService.setPersonalInfo(personalInfo);
 
     const fetchMessages = async () => {
-      const historyMessages = await chatService.getMessages();
-      setMessages(historyMessages);
+      try {
+        const historyMessages = await chatService.getMessages();
+        setMessages(historyMessages);
+      } catch (err) {
+        setError("Failed to fetch chat history");
+        console.error("Error fetching messages:", err);
+      }
     };
+
+    const fetchWeatherAndRecommendation = async () => {
+      try {
+        const position = await geolocationService.getCurrentPosition();
+        const { latitude, longitude } = position.coords;
+        const weatherData = await getWeather(latitude, longitude);
+        await chatService.setLocationInfo(position);
+        await chatService.setWeatherInfo(weatherData);
+        setWeatherInfo(weatherData);
+        
+        const recommendation = await chatService.getActivityRecommendation(position, weatherData);
+        setActivityRecommendation(recommendation);
+      } catch (err) {
+        setError("Failed to fetch weather data or activity recommendation");
+        console.error("Error fetching weather or recommendation:", err);
+      }
+    };
+
     fetchMessages();
+    fetchWeatherAndRecommendation();
     setChatInitialized(true);
   }, []);
 
-  useEffect(() => {
-    console.log(messages);
-    if (chatInitialized && messages.length === 0) {
-      setIsBotTyping(true);
-      Promise.all([
-        chatService.addInitialMessage(),
-        chatService.getMessages(),
-      ]).then(([_, messages]) => {
-        setMessages(messages);
-        setIsBotTyping(false);
-        forceUpdate();
-      });
-    }
-  }, [chatInitialized]);
-
-  //ToDo doesnt yet work the way it should -> should scroll to bottom whenever a new message is added
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -55,15 +68,21 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    scrollToBottom();
 
     setInput("");
     setIsBotTyping(true);
-    await chatService.addMessage(input);
-    setMessages(await chatService.getMessages());
-    setIsBotTyping(false);
-    forceUpdate();
-    scrollToBottom();
+    try {
+      await chatService.addMessage(input);
+      const updatedMessages = await chatService.getMessages();
+      setMessages(updatedMessages);
+    } catch (err) {
+      setError("Failed to send message");
+      console.error("Error sending message:", err);
+    } finally {
+      setIsBotTyping(false);
+      forceUpdate();
+      scrollToBottom();
+    }
   };
 
   return (
@@ -95,7 +114,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
           </div>
         </div>
       ) : (
-        <>{children}</>
+        <Options // Pass props to Options component
+          weatherInfo={weatherInfo}
+          activityRecommendation={activityRecommendation}
+          error={error}
+        />
       )}
       <div className="flex items-end p-4 bg-white border-t border-gray-200 fixed bottom-0 w-full">
         <textarea
@@ -105,8 +128,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
           onChange={(e) => {
             setInput(e.target.value);
             const textarea = e.target;
-            textarea.style.height = "auto"; // Reset the height
-            textarea.style.height = Math.min(textarea.scrollHeight, 96) + "px"; // Set the height based on scrollHeight, max 96px (3 lines)
+            textarea.style.height = "auto";
+            textarea.style.height = Math.min(textarea.scrollHeight, 96) + "px";
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {

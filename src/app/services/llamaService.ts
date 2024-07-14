@@ -4,8 +4,7 @@ import { ChatMessageHistory } from "langchain/stores/message/in_memory";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { saveMessagesToLocalStorage, loadMessagesFromLocalStorage } from './localStorageService';
-import { getWeather } from "../dashboard/components/Weather";
-import { geolocationService } from "../dashboard/components/Location";
+
 
 class ChatService {
   private chat;
@@ -34,15 +33,13 @@ class ChatService {
     this.updatePrompt();
   }
 
-  async setLocationInfo() {
-    this.locationInfo = await geolocationService.getCurrentPosition();
+  async setLocationInfo(locationInfo: any) {
+    this.locationInfo = locationInfo;
     this.updatePrompt();
   }
 
-  async setWeatherInfo() {
-    const position = await geolocationService.getCurrentPosition();
-    const { latitude, longitude } = position.coords;
-    this.weatherInfo = await getWeather(latitude, longitude);
+  async setWeatherInfo(weatherInfo: any) {
+    this.weatherInfo = weatherInfo;
     this.updatePrompt();
   }
 
@@ -101,12 +98,8 @@ class ChatService {
     });
   }
 
-  async getActivityRecommendation() {
-    if (!this.locationInfo || !this.weatherInfo) {
-      throw new Error("Location or weather information is missing");
-    }
-  
-    const systemPrompt = `Use one sentence only. Answer short. Consider the opportunities in the area ${this.locationInfo}. Consider the temperature and condition ${this.weatherInfo} but don't mention it. Suggest a fun activity.`;
+  async getActivityRecommendation(position: any, weather: any) {
+    const systemPrompt = `Use one sentence only. your located in ${this.locationInfo} . Suggest a fun activity. Just tell me your idea no intro`;
   
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],

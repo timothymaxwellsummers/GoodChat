@@ -13,11 +13,11 @@ const DashboardPage: React.FC = () => {
     };
 
     return (
-        <div className='pt-11 pb-16'>
+        <div className='px-4 pt-14'>
             <Header />
-            <div className="px-4">
+            <div className='pt-11 pb-16'>
                 
-               <Chat><Options /></Chat>
+               <Chat><Options weatherInfo={undefined} activityRecommendation={null} error={null} /></Chat>
             </div>
         </div>
     );
