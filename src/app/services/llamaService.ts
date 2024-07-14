@@ -11,6 +11,7 @@ class ChatService {
   private messageHistory;
   private personalInfo: any;
   private locationInfo: any;
+  private mood: any;
 
   constructor() {
     this.chat = new ChatOllama({
@@ -30,13 +31,18 @@ class ChatService {
     this.updatePrompt();
   }
 
-  async setLocationInfo(locationInfo: any) {
+  setLocationInfo(locationInfo: any) {
     this.locationInfo = locationInfo;
     this.updatePrompt();
   }
 
+  setMood(mood: any) {
+    this.mood = mood;
+    this.updatePrompt();
+  }
+
   private updatePrompt() {
-    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Try to stay on topic. Be empathic. Don't reccomend drugs. Be concise. Don't use more that two to three sentences per message this is important.`;
+    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo} and is feeling ${this.mood} today. Create a natural and helpful conversation. Answer all questions to the best of your ability. Try to stay on topic. Be empathic. Don't reccomend drugs. Be concise. Don't use more that two to three sentences per message this is important.`;
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
       new MessagesPlaceholder("messages"),

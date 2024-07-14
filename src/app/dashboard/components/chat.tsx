@@ -8,9 +8,10 @@ import { Weather } from "@/app/types/types";
 interface ChatComponentProps {
   children: React.ReactNode;
   weather: Weather;
+  mood: string;
 }
 
-const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather }) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather, mood }) => {
   const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([]);
   const [input, setInput] = useState("");
   const [chatInitialized, setChatInitialized] = useState(false);
@@ -23,6 +24,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather }) => {
     const personalInfo = getProfileData();
     chatService.setPersonalInfo(personalInfo);
     chatService.setLocationInfo(weather.location.name);
+    chatService.setMood(mood);
 
     const fetchMessages = async () => {
       const historyMessages = await chatService.getMessages();
@@ -55,6 +57,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather }) => {
   useEffect(() => {
     chatService.setLocationInfo(location);
   } , [location]);
+
+  useEffect(() => {
+    chatService.setMood(mood);
+  } , [mood]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

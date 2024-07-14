@@ -74,8 +74,8 @@ const DashboardPage: React.FC = () => {
           ) : (
             <div className="pt-11 pb-16">
               <Header />
-              <Chat weather={weather}>
-                <Options weather={weather} />
+              <Chat weather={weather} mood={todasyMood} >
+                <Options weather={weather}/>
               </Chat>
             </div>
           )}
