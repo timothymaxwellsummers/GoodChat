@@ -24,6 +24,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood }) => {
     const [activityRecommendation, setActivityRecommendation] = useState<string | null>(null);
 
     useEffect(() => {
+      if (mood) {
+          chatService.setMoodInfo(mood); 
+      }
+  }, [mood]);
+
+    useEffect(() => {
         const personalInfo = getProfileData();
         chatService.setPersonalInfo(personalInfo);
 
