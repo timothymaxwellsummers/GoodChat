@@ -6,9 +6,10 @@ import { getProfileData } from "../../services/localStorageService";
 
 interface ChatComponentProps {
   children: React.ReactNode;
+  location: string;
 }
 
-const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({ children, location }) => {
   const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([]);
   const [input, setInput] = useState("");
   const [chatInitialized, setChatInitialized] = useState(false);
@@ -20,6 +21,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
   useEffect(() => {
     const personalInfo = getProfileData();
     chatService.setPersonalInfo(personalInfo);
+    chatService.setLocationInfo(location);
 
     const fetchMessages = async () => {
       const historyMessages = await chatService.getMessages();
@@ -48,6 +50,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    chatService.setLocationInfo(location);
+  } , [location]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
