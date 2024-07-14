@@ -1,17 +1,18 @@
+"use client"
 import React, { useState, useEffect, useReducer, useRef } from "react";
 import { chatService } from "../../services/llamaService";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { getProfileData } from "../../services/localStorageService";
-import { getWeather } from "../../dashboard/components/Weather";
-import { geolocationService } from "../../dashboard/components/Location";
 import Options from "./options";
 
 interface ChatComponentProps {
-    children: React.ReactNode;
-    mood: string | null; 
+    children?: React.ReactNode;
+    mood: string | null;
+    weatherInfo: any;
+    locationInfo: any;
 }
 
-const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood }) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood, weatherInfo, locationInfo }) => {
     const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([]);
     const [input, setInput] = useState("");
     const [chatInitialized, setChatInitialized] = useState(false);
@@ -20,14 +21,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [isTyping, setIsTyping] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [weatherInfo, setWeatherInfo] = useState<any>(null);
     const [activityRecommendation, setActivityRecommendation] = useState<string | null>(null);
 
     useEffect(() => {
-      if (mood) {
-          chatService.setMoodInfo(mood); 
-      }
-  }, [mood]);
+        if (mood) {
+            chatService.setMoodInfo(mood);
+        }
+    }, [mood]);
 
     useEffect(() => {
         const personalInfo = getProfileData();
@@ -43,27 +43,25 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood }) => {
             }
         };
 
-        const fetchWeatherAndRecommendation = async () => {
+        const fetchActivityRecommendation = async () => {
             try {
-                const position = await geolocationService.getCurrentPosition();
-                const { latitude, longitude } = position.coords;
-                const weatherData = await getWeather(latitude, longitude);
-                await chatService.setLocationInfo(position);
-                await chatService.setWeatherInfo(weatherData);
-                setWeatherInfo(weatherData);
+                if (locationInfo && weatherInfo) {
+                    await chatService.setLocationInfo(locationInfo);
+                    await chatService.setWeatherInfo(weatherInfo);
 
-                const recommendation = await chatService.getActivityRecommendation(position, weatherData);
-                setActivityRecommendation(recommendation);
+                    const recommendation = await chatService.getActivityRecommendation(locationInfo, weatherInfo);
+                    setActivityRecommendation(recommendation);
+                }
             } catch (err) {
-                setError("Failed to fetch weather data or activity recommendation");
-                console.error("Error fetching weather or recommendation:", err);
+                setError("Failed to fetch activity recommendation");
+                console.error("Error fetching activity recommendation:", err);
             }
         };
 
         fetchMessages();
-        fetchWeatherAndRecommendation();
+        fetchActivityRecommendation();
         setChatInitialized(true);
-    }, []);
+    }, [locationInfo, weatherInfo]);
 
     useEffect(() => {
         scrollToBottom();
@@ -101,9 +99,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood }) => {
                             <div
                                 key={index}
                                 className={`my-2 p-3 rounded-lg ${
-                                    msg instanceof HumanMessage
-                                        ? "bg-sky-50 text-right"
-                                        : "bg-sky-100 text-left"
+                                    msg instanceof HumanMessage ? "bg-sky-50 text-right" : "bg-sky-100 text-left"
                                 }`}
                             >
                                 <p>
@@ -121,11 +117,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood }) => {
                     </div>
                 </div>
             ) : (
-                <Options
-                    weatherInfo={weatherInfo}
-                    activityRecommendation={activityRecommendation}
-                    error={error}
-                />
+                <Options weatherInfo={weatherInfo} activityRecommendation={activityRecommendation} error={error} />
             )}
             <div className="flex items-end p-4 bg-white border-t border-gray-200 fixed bottom-0 w-full">
                 <textarea
