@@ -3,13 +3,14 @@ import React, { useState, useEffect, use, useReducer, useRef } from "react";
 import { chatService } from "../../services/llamaService";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { getProfileData } from "../../services/localStorageService";
+import { Weather } from "@/app/types/types";
 
 interface ChatComponentProps {
   children: React.ReactNode;
-  location: string;
+  weather: Weather;
 }
 
-const ChatComponent: React.FC<ChatComponentProps> = ({ children, location }) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather }) => {
   const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([]);
   const [input, setInput] = useState("");
   const [chatInitialized, setChatInitialized] = useState(false);
@@ -21,7 +22,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, location }) => 
   useEffect(() => {
     const personalInfo = getProfileData();
     chatService.setPersonalInfo(personalInfo);
-    chatService.setLocationInfo(location);
+    chatService.setLocationInfo(weather.location.name);
 
     const fetchMessages = async () => {
       const historyMessages = await chatService.getMessages();

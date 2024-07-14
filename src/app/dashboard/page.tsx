@@ -56,9 +56,8 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="pt-11 pb-16">
       <Header />
-      {weather.location.name}
-      <Chat location={weather.location.name}>
-        <Options />
+      <Chat weather={weather}>
+        <Options weather={weather}/>
       </Chat>
     </div>
   );
