@@ -97,7 +97,7 @@ class ChatService {
   }
 
   async getActivityRecommendation(locationInfo: any, weatherInfo: any) {
-    const systemPrompt = `Use one sentence only. Your location is ${locationInfo}. Name the city. Suggest a fun activity. Just tell me your idea, no intro.`;
+    const systemPrompt = `Use one sentence only. Suggest a fun activity. Consider weather ${weatherInfo} and ${locationInfo}.`;
 
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
