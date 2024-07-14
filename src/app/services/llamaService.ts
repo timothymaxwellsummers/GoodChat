@@ -1,10 +1,8 @@
-// services/chatService.ts
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
 import { ChatMessageHistory } from "langchain/stores/message/in_memory";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { saveMessagesToLocalStorage, loadMessagesFromLocalStorage } from './localStorageService';
-
 
 class ChatService {
   private chat;
@@ -43,7 +41,7 @@ class ChatService {
     this.updatePrompt();
   }
 
-  setMoodInfo(moodInfo: any){
+  setMoodInfo(moodInfo: any) {
     this.moodInfo = moodInfo;
     this.updatePrompt();
   }
@@ -98,20 +96,20 @@ class ChatService {
     });
   }
 
-  async getActivityRecommendation(position: any, weather: any) {
-    const systemPrompt = `Use one sentence only. your located in ${this.locationInfo} Name the city. Suggest a fun activity. Just tell me your idea no intro`;
-  
+  async getActivityRecommendation(locationInfo: any, weatherInfo: any) {
+    const systemPrompt = `Use one sentence only. Your location is ${locationInfo}. Name the city. Suggest a fun activity. Just tell me your idea, no intro.`;
+
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
       new MessagesPlaceholder("messages"),
     ]);
-  
+
     const chain = prompt.pipe(this.chat);
-  
+
     const responseMessage = await chain.invoke({
       messages: [],
     });
-  
+
     return responseMessage.content.toString();
   }
 }

@@ -9,7 +9,7 @@ import { getWeather } from './components/Weather';
 
 const DashboardPage: React.FC = () => {
     const [showDashboard, setShowDashboard] = useState(false);
-    const [mood, setMood] = useState<string | null>(null);
+    const [mood, setMood] = useState<string | null>(null); 
     const [error, setError] = useState<string | null>(null);
     const [weatherInfo, setWeatherInfo] = useState<any>(null);
     const [locationInfo, setLocationInfo] = useState<any>(null);
@@ -20,20 +20,20 @@ const DashboardPage: React.FC = () => {
     };
 
     useEffect(() => {
-        const fetchWeatherAndLocation = async () => {
+        const fetchWeatherAndRecommendation = async () => {
             try {
                 const position = await geolocationService.getCurrentPosition();
-                const { latitude, longitude } = position.coords;
-                const weatherData = await getWeather(latitude, longitude);              
                 setLocationInfo(position);
+                const { latitude, longitude } = position.coords;
+                const weatherData = await getWeather(latitude, longitude);
                 setWeatherInfo(weatherData);
             } catch (err) {
-                setError("Failed to fetch weather data or location information");
-                console.error("Error fetching weather or location information:", err);
+                setError("Failed to fetch weather data or activity recommendation");
+                console.error("Error fetching weather or recommendation:", err);
             }
         };
 
-        fetchWeatherAndLocation();
+        fetchWeatherAndRecommendation();
     }, []);
 
     return (
@@ -41,7 +41,7 @@ const DashboardPage: React.FC = () => {
             <Header />
             <div className="px-4">
                 {showDashboard ? (
-                    <Chat mood={mood} weatherInfo={weatherInfo} locationInfo={locationInfo} />
+                    <Chat mood={mood} weatherInfo={weatherInfo} locationInfo={weatherInfo.location.name} />
                 ) : (
                     <MoodRequest onMoodSelect={handleMoodSelected} />
                 )}
