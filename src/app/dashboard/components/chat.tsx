@@ -24,7 +24,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping] = useState(false);
 
-  const helperPhrase = "This is the patients chat message you need to answer:";
+  const helperPhrase = "This is the patients chat message you need to answer be concise!:";
 
   useEffect(() => {
     const personalInfo = getProfileData();
@@ -54,7 +54,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
     }
   }, [chatInitialized]);
 
-  //ToDo doesnt yet work the way it should -> should scroll to bottom whenever a new message is added
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
