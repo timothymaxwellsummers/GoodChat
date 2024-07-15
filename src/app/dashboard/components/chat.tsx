@@ -75,12 +75,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood, weatherIn
   }, [messages]);
 
   useEffect(() => {
-    chatService.setLocationInfo(weather.location.name);
-    console.log("Location", weather.location.name);
-  }, [weather.location.name]);
+    chatService.setLocationInfo(weatherInfo.location.name);
+    console.log("Location", weatherInfo.location.name);
+  }, [weatherInfo.location.name]);
 
   useEffect(() => {
-    chatService.setMood(mood);
   }, [mood]);
     useEffect(() => {
         scrollToBottom();

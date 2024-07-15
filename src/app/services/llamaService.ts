@@ -5,6 +5,7 @@ import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { saveMessagesToLocalStorage, loadMessagesFromLocalStorage } from './localStorageService';
 
 class ChatService {
+  
   private chat;
   private chain: any;
   private messageHistory;
@@ -47,7 +48,6 @@ class ChatService {
   }
 
   private updatePrompt() {
-    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo} and is feeling ${this.moodInfo} today. Create a natural and helpful conversation. Answer all questions to the best of your ability. Try to stay on topic. Be empathic. Don't recommend drugs. Be concise. Don't use more than two to three sentences per message, this is important.`;
     const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Create a natural and helpful conversation. Answer all questions to the best of your ability. Try to stay on topic. Be empathic. Don't reccomend drugs. Be concise. Don't use more that two to three sentences per message this is extremely important.`;
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
@@ -58,7 +58,7 @@ class ChatService {
   }
 
   async addMessage(content: string): Promise<void> {
-    const newMessage = new HumanMessage(`Some additional information on your patient: He is currently in ${this.locationInfo} and is feeling ${this.mood} today. This is the patients chat message you need to answer be concise!:`+content);
+    const newMessage = new HumanMessage(`Some additional information on your patient: He is currently in ${this.locationInfo} and is feeling ${this.moodInfo} today. This is the patients chat message you need to answer be concise!:`+content);
     await this.messageHistory.addMessage(newMessage);
 
     const responseMessage = await this.chain.invoke({
