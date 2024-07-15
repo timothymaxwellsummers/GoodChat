@@ -56,6 +56,32 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood, weatherIn
         setChatInitialized(true);
     }, []);
 
+  useEffect(() => {
+    if (chatInitialized && messages.length === 0) {
+      setIsBotTyping(true);
+      Promise.all([
+        chatService.addInitialMessage(),
+        chatService.getMessages(),
+      ]).then(([_, messages]) => {
+        setMessages(messages);
+        setIsBotTyping(false);
+        forceUpdate();
+      });
+    }
+  }, [chatInitialized]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    chatService.setLocationInfo(weather.location.name);
+    console.log("Location", weather.location.name);
+  }, [weather.location.name]);
+
+  useEffect(() => {
+    chatService.setMood(mood);
+  }, [mood]);
     useEffect(() => {
         scrollToBottom();
     }, [messages]);

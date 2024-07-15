@@ -14,7 +14,7 @@ const Options: React.FC<OptionsProps> = ({ weatherInfo, activityRecommendation, 
     <div className="px-4 mt-8"> 
       <div className="text-3xl font-medium">🛋️ Your Dashboard</div>
       <div className="text-xl text-gray-500 pt-2 pb-2">
-        Here you can start chatting or explore more options.
+        Here you can start chatting or get some inspiration.
       </div>
       <div className="flex flex-wrap">
         <div className="w-full md:w-1/2 pr-4">
