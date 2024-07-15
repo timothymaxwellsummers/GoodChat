@@ -29,10 +29,6 @@ const RandomQuote: React.FC = () => {
     fetchRandomQuote();
   }, []);
 
-  useEffect(() => {
-    console.log("Quote", quote);
-  }, [quote]);
-
   if (loading) {
     return <p>Loading quote...</p>;
   }

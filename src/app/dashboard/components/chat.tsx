@@ -11,7 +11,11 @@ interface ChatComponentProps {
   mood: string;
 }
 
-const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather, mood }) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({
+  children,
+  weather,
+  mood,
+}) => {
   const [messages, setMessages] = useState<(HumanMessage | AIMessage)[]>([]);
   const [input, setInput] = useState("");
   const [chatInitialized, setChatInitialized] = useState(false);
@@ -19,6 +23,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather, mood }
   const [isBotTyping, setIsBotTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping] = useState(false);
+
+  const helperPhrase = "This is the patients chat message you need to answer:";
 
   useEffect(() => {
     const personalInfo = getProfileData();
@@ -35,7 +41,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather, mood }
   }, []);
 
   useEffect(() => {
-    console.log(messages);
     if (chatInitialized && messages.length === 0) {
       setIsBotTyping(true);
       Promise.all([
@@ -55,12 +60,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather, mood }
   }, [messages]);
 
   useEffect(() => {
-    chatService.setLocationInfo(location);
-  } , [location]);
+    chatService.setLocationInfo(weather.location.name);
+    console.log("Location", weather.location.name);
+  }, [weather.location.name]);
 
   useEffect(() => {
     chatService.setMood(mood);
-  } , [mood]);
+  }, [mood]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -95,11 +101,16 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, weather, mood }
               >
                 <p>
                   {msg instanceof HumanMessage ? (
-                    <span className="font-semibold">You: </span>
+                    <>
+                      <span className="font-semibold">You: </span>
+                      {msg.content.toString().split(helperPhrase)[1].trim()}
+                    </>
                   ) : (
-                    <span className="font-semibold">Clara: </span>
+                    <>
+                      <span className="font-semibold">Clara: </span>
+                      {msg.content.toString()}
+                    </>
                   )}
-                  {msg.content.toString()}
                 </p>
               </div>
             ))}
