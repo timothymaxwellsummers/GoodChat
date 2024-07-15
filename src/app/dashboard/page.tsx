@@ -3,15 +3,14 @@ import React, { useEffect, useState } from "react";
 import Chat from "./components/chat";
 import Options from "./components/options";
 import Header from "../components/Header";
-import { Weather } from "../types/types";
 import MoodRequest from "./components/moodRequest";
+import { Weather } from "../types/types";
 
 const DashboardPage: React.FC = () => {
   const [weather, setWeather] = useState<Weather | null>(null);
-  //todo make nice loading logic
   const [loading, setLoading] = useState<boolean>(true);
-  const [location, setLocation] = useState<string>("London"); // Default location
-  const [todasyMood, setTodaysMood] = useState<string | null>(null); // Default mood
+  const [location, setLocation] = useState<string>("Munich"); // Default location
+  const [todaysMood, setTodaysMood] = useState<string | null>(null); // Default mood
 
   const fetchWeatherData = async (loc: string) => {
     try {
@@ -36,7 +35,6 @@ const DashboardPage: React.FC = () => {
       },
       (error) => {
         console.error("Error getting location", error);
-        // Fallback to default location
         fetchWeatherData(location);
       }
     );
@@ -50,7 +48,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <>
-      {!todasyMood ? (
+      {!todaysMood ? (
         <>
           <Header />
           <MoodRequest setTodaysMood={setTodaysMood} />
@@ -74,9 +72,11 @@ const DashboardPage: React.FC = () => {
           ) : (
             <div className="pt-11 pb-16">
               <Header />
-              <Chat weather={weather} mood={todasyMood} >
-                <Options weather={weather}/>
-              </Chat>
+              <Chat 
+                mood={todaysMood}
+                weatherInfo={weather} 
+                locationInfo={weather.location.name}
+              />
             </div>
           )}
         </>

@@ -1,4 +1,3 @@
-// services/chatService.ts
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
 import { ChatMessageHistory } from "langchain/stores/message/in_memory";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
@@ -11,7 +10,8 @@ class ChatService {
   private messageHistory;
   private personalInfo: any;
   private locationInfo: any;
-  private mood: any;
+  private moodInfo: any;
+  private weatherInfo: any;
 
   constructor() {
     this.chat = new ChatOllama({
@@ -36,13 +36,18 @@ class ChatService {
     this.updatePrompt();
   }
 
-  setMood(mood: any) {
-    this.mood = mood;
+  setMoodInfo(moodInfo: any) {
+    this.moodInfo = moodInfo;
+    this.updatePrompt();
+  }
+
+  setWeatherInfo(weatherInfo: any) {
+    this.weatherInfo = weatherInfo;
     this.updatePrompt();
   }
 
   private updatePrompt() {
-    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo} and is feeling ${this.mood} today. Create a natural and helpful conversation. Answer all questions to the best of your ability. Try to stay on topic. Be empathic. Don't reccomend drugs. Be concise. Don't use more that two to three sentences per message this is important.`;
+    const systemPrompt = `You are a helpful psychotherapist. This is a psychotherapeutic anamnesis form your patient has filled out for you: ${this.personalInfo}. Your patient is located in ${this.locationInfo} and is feeling ${this.moodInfo} today. Create a natural and helpful conversation. Answer all questions to the best of your ability. Try to stay on topic. Be empathic. Don't recommend drugs. Be concise. Don't use more than two to three sentences per message, this is important.`;
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],
       new MessagesPlaceholder("messages"),
@@ -73,6 +78,23 @@ class ChatService {
     });
     await this.messageHistory.addMessage(new AIMessage(initialMessage.content.toString()));
     this.saveMessages();
+  }
+
+  async getActivityRecommendation(): Promise<string> {
+    const systemPrompt = `Use one sentence only.Name the city iam Suggest a fun activity. Consider weather ${this.weatherInfo?.current?.temp_c}°C ${this.weatherInfo?.current.condition} and ${this.weatherInfo?.location?.name}. Try to brighten up the mood ${this.moodInfo}. Don't mention alcohol.`;
+
+    const prompt = ChatPromptTemplate.fromMessages([
+      ["system", systemPrompt],
+      new MessagesPlaceholder("messages"),
+    ]);
+
+    const chain = prompt.pipe(this.chat);
+
+    const responseMessage = await chain.invoke({
+      messages: [],
+    });
+
+    return responseMessage.content.toString();
   }
 
   private async saveMessages() {
