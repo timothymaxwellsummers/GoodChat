@@ -19,7 +19,7 @@ const Options: React.FC<OptionsProps> = ({
         Here you can start chatting or explore more options.
       </div>
       <div className="flex flex-wrap">
-        <div className="w-full md:w-1/2 pr-2">
+        <div className="w-full md:w-1/2 pr-4">
           {weatherInfo ? (
             <div className="bg-gray-100 p-4 rounded-lg mt-4">
               <div className="text-sm text-gray-500 mb-2">🌤️ Current Weather</div>
@@ -34,7 +34,7 @@ const Options: React.FC<OptionsProps> = ({
             <div className="pt-4 pb-4 text-gray-500">Loading weather data...</div>
           )}
         </div>
-        <div className="w-full md:w-1/2 pl-2">
+        <div className="w-full md:w-1/2">
           {activityRecommendation ? (
             <div className="bg-gray-100 p-4 rounded-lg mt-4">
               <div className="text-sm text-gray-500 mb-2">🎉 Activity Recommendation</div>

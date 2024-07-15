@@ -96,8 +96,8 @@ class ChatService {
     });
   }
 
-  async getActivityRecommendation(locationInfo: any, weatherInfo: any) {
-    const systemPrompt = `Use one sentence only. Suggest a fun activity. Consider weather ${weatherInfo?.temp_c} and ${locationInfo}.Try to brighten up the mood ${this.moodInfo}`;
+  async getActivityRecommendation() {
+    const systemPrompt = `Use one sentence only. Suggest a fun activity. Consider weather ${this.weatherInfo?.temp_c} and ${this.locationInfo}.Try to brighten up the mood ${this.moodInfo}. Don't mention alcohol`;
 
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", systemPrompt],

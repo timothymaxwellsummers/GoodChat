@@ -49,7 +49,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ children, mood, weatherIn
                     await chatService.setLocationInfo(locationInfo);
                     await chatService.setWeatherInfo(weatherInfo);
 
-                    const recommendation = await chatService.getActivityRecommendation(locationInfo, weatherInfo.temp_c);
+                    const recommendation = await chatService.getActivityRecommendation();
                     setActivityRecommendation(recommendation);
                 }
             } catch (err) {
