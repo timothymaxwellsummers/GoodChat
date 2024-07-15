@@ -10,7 +10,7 @@ const DashboardPage: React.FC = () => {
   const [weather, setWeather] = useState<Weather | null>(null);
   //todo make nice loading logic
   const [loading, setLoading] = useState<boolean>(true);
-  const [location, setLocation] = useState<string>("London"); // Default location
+  const [location, setLocation] = useState<string>("Munich"); // Default location
   const [todasyMood, setTodaysMood] = useState<string | null>(null); // Default mood
 
   const fetchWeatherData = async (loc: string) => {

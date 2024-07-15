@@ -55,25 +55,16 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   }, [chatInitialized]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
     chatService.setLocationInfo(weather.location.name);
     console.log("Location", weather.location.name);
-  }, [weather.location.name]);
+  }, [weather]);
 
   useEffect(() => {
     chatService.setMood(mood);
   }, [mood]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   const handleSend = async () => {
     if (!input.trim()) return;
-    scrollToBottom();
 
     setInput("");
     setIsBotTyping(true);
@@ -81,7 +72,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
     setMessages(await chatService.getMessages());
     setIsBotTyping(false);
     forceUpdate();
-    scrollToBottom();
   };
 
   return (
