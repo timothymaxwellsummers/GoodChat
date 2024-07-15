@@ -41,7 +41,11 @@ const DashboardPage: React.FC = () => {
             <Header />
             <div className="pt-11 pb-16">
                 {showDashboard ? (
-                    <Chat mood={mood} weatherInfo={weatherInfo} locationInfo={weatherInfo.location.name} />
+                    <Chat 
+                        mood={mood} 
+                        weatherInfo={weatherInfo} 
+                        locationInfo={weatherInfo?.location?.name || 'Location not available'} 
+                    />
                 ) : (
                     <MoodRequest onMoodSelect={handleMoodSelected} />
                 )}
